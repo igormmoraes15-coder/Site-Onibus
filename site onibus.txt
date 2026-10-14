@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Transporte</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Cabeçalho -->
+    <header class="bg-indigo-600 text-white shadow-md">
+        <div class="max-w-md mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                <i class="fa-solid fa-bus-simple"></i> Controle de Transporte
+            </h1>
+            <button onclick="mudarMes(-1)" class="p-2 hover:bg-indigo-700 rounded-lg transition"><i class="fa-solid fa-chevron-left"></i></button>
+            <span id="mesAnoLabel" class="font-semibold text-lg">Mês Ano</span>
+            <button onclick="mudarMes(1)" class="p-2 hover:bg-indigo-700 rounded-lg transition"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-md w-full mx-auto p-4 space-y-4">
+
+        <!-- Resumo Financeiro do Mês -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 space-y-3">
+            <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Resumo do Mês</h2>
+            
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                    <span class="text-xs text-emerald-600 font-medium block">Carona (Ida)</span>
+                    <span id="totalCarona" class="text-lg font-bold text-emerald-700">R$ 0,00</span>
+                </div>
+                <div class="bg-amber-50 p-3 rounded-xl border border-amber-100">
+                    <span class="text-xs text-amber-600 font-medium block">Volta (R$ 12,49)</span>
+                    <span id="totalVolta" class="text-lg font-bold text-amber-700">R$ 0,00</span>
+                </div>
+                <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
+                    <span class="text-xs text-blue-600 font-medium block">Ônibus</span>
+                    <span id="totalOnibus" class="text-lg font-bold text-blue-700">R$ 0,00</span>
+                </div>
+                <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+                    <span class="text-xs text-indigo-600 font-medium block">Valor Geral</span>
+                    <span id="totalGeral" class="text-lg font-bold text-indigo-700">R$ 0,00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legenda -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tipos de Transporte</p>
+            <div class="grid grid-cols-3 gap-2 text-xs font-medium">
+                <div class="flex items-center gap-1.5 p-2 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                    <span>Carona (R$ 5,45)</span>
+                </div>
+                <div class="flex items-center gap-1.5 p-2 rounded-lg bg-amber-50 text-amber-700 border border-amber-200">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                    <span>Volta (R$ 12,49)</span>
+                </div>
+                <div class="flex items-center gap-1.5 p-2 rounded-lg bg-blue-50 text-blue-700 border border-blue-200">
+                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                    <span>Ônibus (R$ 11,55)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendário -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+            <div class="grid grid-cols-7 gap-1 text-center font-semibold text-slate-400 text-xs mb-2">
+                <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+            </div>
+            <div id="diasCalendario" class="grid grid-cols-7 gap-1.5 text-sm"></div>
+        </div>
+
+    </main>
+
+    <!-- Modal de Edição -->
+    <div id="modalDia" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl max-w-xs w-full p-5 space-y-4 shadow-xl">
+            <h3 id="modalTitulo" class="font-bold text-lg text-slate-800">Dia 1</h3>
+            
+            <div class="space-y-2">
+                <button onclick="salvarDia('carona')" class="w-full text-left p-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-medium border border-emerald-200 transition flex justify-between items-center">
+                    <span>Carona Ida</span>
+                    <span class="text-xs bg-emerald-200 px-2 py-1 rounded-md">R$ 5,45</span>
+                </button>
+                <button onclick="salvarDia('volta')" class="w-full text-left p-3 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-medium border border-amber-200 transition flex justify-between items-center">
+                    <span>Volta (Carona Gratuita)</span>
+                    <span class="text-xs bg-amber-200 px-2 py-1 rounded-md">R$ 12,49</span>
+                </button>
+                <button onclick="salvarDia('onibus')" class="w-full text-left p-3 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-800 font-medium border border-blue-200 transition flex justify-between items-center">
+                    <span>Ônibus</span>
+                    <span class="text-xs bg-blue-200 px-2 py-1 rounded-md">R$ 11,55</span>
+                </button>
+                <button onclick="salvarDia(null)" class="w-full text-center p-2 rounded-xl text-slate-400 hover:text-red-600 text-xs font-medium transition">
+                    Remover marcação
+                </button>
+            </div>
+
+            <button onclick="fecharModal()" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition">
+                Cancelar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const VALORES = { carona: 5.45, volta: 12.49, onibus: 11.55 };
+        let dataAtual = new Date();
+        let diaSelecionado = null;
+        let registros = JSON.parse(localStorage.getItem('transporte_registros') || '{}');
+
+        function formatarChaveMes(ano, mes) { return `${ano}-${String(mes + 1).padStart(2, '0')}`; }
+        function mudarMes(direcao) { dataAtual.setMonth(dataAtual.getMonth() + direcao); renderizarCalendario(); }
+
+        function renderizarCalendario() {
+            const ano = dataAtual.getFullYear();
+            const mes = dataAtual.getMonth();
+            const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+            document.getElementById('mesAnoLabel').innerText = `${nomesMeses[mes]} de ${ano}`;
+
+            const primeiroDiaIndex = new Date(ano, mes, 1).getDay();
+            const totalDiasMes = new Date(ano, mes + 1, 0).getDate();
+            const container = document.getElementById('diasCalendario');
+            container.innerHTML = '';
+
+            for (let i = 0; i < primeiroDiaIndex; i++) { container.innerHTML += `<div></div>`; }
+
+            const chaveMes = formatarChaveMes(ano, mes);
+            if (!registros[chaveMes]) registros[chaveMes] = {};
+
+            let totalCarona = 0, totalVolta = 0, totalOnibus = 0;
+
+            for (let dia = 1; dia <= totalDiasMes; dia++) {
+                const tipo = registros[chaveMes][dia];
+                let corClasse =
